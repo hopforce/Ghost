@@ -13,6 +13,16 @@ const lazyLoad = createLazyRouter();
 module.exports = (name) => {
     debug('new app start', name);
     const app = express();
+
+    app.use(function (req, res, next) {
+        if (req.headers["cloudfront-forwarded-proto"]) {
+            req.headers["x-forwarded-proto"] =
+                req.headers["cloudfront-forwarded-proto"];
+        }
+        return next();
+    });
+
+
     app.set('name', name);
 
     // Make sure 'req.secure' is valid for proxied requests
